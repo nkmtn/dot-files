@@ -1,0 +1,92 @@
+[user]
+	email = [ADD EMAIL]
+	name = [ADD FULL NAME]
+	signingkey = [ADD KEY]
+
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
+[color]
+	ui = true
+[core]
+	editor = vim
+[github]
+	user = [ADD USERNAME]
+[alias]
+	# checkout
+	co = checkout
+	com = "!f() { git checkout $(git mainbranch); }; f"
+	mk = checkout -b	
+	uma = checkout -- .
+        um = checkout --
+
+	# add
+	a = add
+        au = add -u
+        ai = add --intent-to-add
+	ap = add -p
+
+	# commits
+	c = commit
+	cm = commit -m
+	camend = commit --amend
+        cne = commit --amend --no-edit
+        cf = commit --fixup
+	
+	# fetch & pull
+	fo = fetch origin
+	fom = "!f() { git fetch origin $(git mainbranch) $@; }; f"
+	fob = "!f() { git fetch origin $(git branch | grep '^\\*' | cut -d' ' -f2) $@ ;}; f"
+
+	# push
+	p = push
+        po = push origin
+	pom = "!f() { git push origin $(git mainbranch) $@; }; f"	
+	pob = "!f() { git push origin $(git branch | grep '^\\*' | cut -d' ' -f2) $@ ;}; f"
+        pobu = pob -u
+        pobd = "!f() { git push origin $(git branch | grep '^\\*' | cut -d' ' -f2) --dry-run $@ ;}; f"
+        pobf = "!f() { git push origin $(git branch | grep '^\\*' | cut -d' ' -f2) $@ --force-with-lease ;}; f"
+        pobfd = "!f() { git push origin $(git branch | grep '^\\*' | cut -d' ' -f2) --dry-run $@ --force-with-lease ;}; f"
+
+	# merge
+	mfh = merge FETCH_HEAD
+        mfom = "!f() { git fom && git mfh; }; f"
+
+	# rebase
+	ri = rebase -i
+        riaa = rebase --autostash --autosquash -i
+        riom = "!f() { git rebase -i origin/$(git mainbranch) $@; }; f"
+        rioms = "!f() { git rebase -i origin/$(git mainbranch) --autostash --autosquash $@;}; f"
+        frioms = "!f() { git fom && git rebase -i origin/$(git mainbranch) --autostash --autosquash $@;}; f"
+
+	# log
+	l = log --pretty=format:"%C(auto)%h%d\\ %s\\ %C(red)[%C(green)%cn%C(red)]\\ %C(red)%ad%C(auto)" --decorate --date=relative --graph
+        l5 = l -5
+        la = l --all
+        dl = l --numstat -1
+        dld = log -u -1
+	igrepcm = log -i --grep
+
+	# diff
+	d = diff
+        dc = diff --cached
+	dbranch = "!f() { git diff $(git merge-base $(git mainbranch) $1)..$1; }; f"
+	dthisbranch = "!f() { branch=\"$(git branch | grep '^\\*' | cut -d' ' -f2)\" ; git dbranch $branch; }; f"
+	
+	# reset
+        uaa = reset HEAD .
+        ua = reset HEAD	
+
+	# stuff
+	s = status -sb
+	igrep = grep -Ii
+	cp = cherry-pick	
+	mainbranch = "!f() { git symbolic-ref refs/remotes/origin/HEAD $@ | sed 's@^refs/remotes/origin/@@'; }; f"
+	torelease = "!f() { git shortlog --first-parent --pretty=format:'- %s: %b (%cr)' HEAD...$(git tag -l --sort=-v:refname | grep -E 'production-' | sed -n 2p) | sed -E 's/Merge pull request | from [^:]+//g'; }; f"
+	
+	# my core specific:
+        pwp = "!f() { git pull; poetry install; }; f"
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
